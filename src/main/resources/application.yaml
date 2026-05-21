@@ -1,6 +1,39 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: ms-courier-service
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yaml
 
-server:
-  port: 8080
+  datasource:
+    url: jdbc:postgresql://localhost:5432/courier_db
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-retries: 3
+
+rabbitmq:
+  queue:
+    test: courier.order-delivered.queue
+
