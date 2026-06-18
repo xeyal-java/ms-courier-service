@@ -1,6 +1,45 @@
+server:
+  port: 9001
+
 spring:
   application:
     name: ms-courier-service
 
-server:
-  port: 8080
+  data:
+    redis:
+      host: ${REDIS_HOST:redis-server}
+      port: 6379
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yaml
+    enabled: true
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://courier-postgres:5432/courier_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-retries: 3
+
+courier:
+  rabbitmq:
+    queue:
+      order-delivered: courier.order-delivered.queue
